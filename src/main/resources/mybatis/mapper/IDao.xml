@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tech.prjm09.dao.IDao">
+	<sql id="includeCount">
+		<choose>
+			<when test="param2==1">
+				<!-- WHERE (BTITLE LIKE '%'||#{param1}||'%') -->
+				WHERE BTITLE LIKE CONCAT('%',#{param1}, '%')
+			</when>
+			<when test="param2==2">
+				<!-- WHERE (BCONTENT LIKE '%'||#{param1}||'%') -->
+				WHERE (BTITLE LIKE CONCAT('%',#{param1}, '%')
+			</when>
+			<when test="param2==3">
+				<!-- WHERE (BTITLE LIKE '%'||#{param1}||'%'
+				OR BCONTENT LIKE '%'||#{param1}||'%') -->
+				WHERE (BTITLE LIKE CONCAT('%',#{param1}, '%'
+				OR BTITLE LIKE CONCAT('%',#{param1}, '%')
+				
+			</when>
+			<otherwise>
+			
+			</otherwise>	
+		</choose>
+	</sql>
+	<sql id="includeList">
+		<choose>
+			<when test="param4==1">
+				WHERE BTITLE LIKE CONCAT('%',#{param3}, '%')
+			</when>
+			<when test="param4==2">
+				WHERE (BTITLE LIKE CONCAT('%',#{param3}, '%')
+			</when>
+			<when test="param4==3">
+				WHERE (BTITLE LIKE CONCAT('%',#{param3}, '%'
+				OR BTITLE LIKE CONCAT('%',#{param3}, '%')
+			</when>
+			<otherwise>
+			
+			</otherwise>	
+		</choose>
+	</sql>
+
+	<select id="list" resultType="com.tech.prjm09.dto.BDto">
+<!-- 		SELECT BID,BNAME,BTITLE,BCONTENT,
+		BDATE,BHIT,BGROUP,BSTEP,BINDENT 
+		FROM REPLYBOARD ORDER BY BGROUP DESC,BSTEP ASC -->
+		
+		<!-- SELECT * FROM (SELECT ROWNUM NUM,N.*
+		FROM (SELECT * FROM REPLYBOARD ORDER BY BGROUP DESC,
+		BSTEP ASC) N <include refid="includeList"/> ) 
+		WHERE NUM BETWEEN #{param1} AND #{param2} -->
+	
+	SELECT BID,BNAME,BTITLE,BCONTENT,
+		BDATE,BHIT,BGROUP,BSTEP,BINDENT
+FROM replyboard
+<include refid="includeList"/>
+ORDER BY BGROUP DESC,BSTEP ASC
+LIMIT #{param1},3
+	
+		
+<!-- 		SELECT *
+FROM (
+    SELECT N.*, @rownum := @rownum + 1 AS NUM
+    FROM (
+        SELECT * 
+        FROM REPLYBOARD 
+        <include refid="includeList"/>
+        ORDER BY BGROUP DESC, BSTEP ASC
+    ) N, (SELECT @rownum := 0) r
+) AS temp
+WHERE NUM BETWEEN #{param1} AND #{param2}; -->
+			
+		<!-- SELECT BID,BNAME,BTITLE,BCONTENT,BDATE,
+		BHIT,BGROUP,BSTEP,BINDENT
+		FROM (SELECT BID, BNAME, BTITLE, BCONTENT, BDATE,
+		BHIT, BGROUP, BSTEP, BINDENT,
+		ROW_NUMBER() OVER(ORDER BY BGROUP DESC, BSTEP ASC) B_SEQ FROM REPLYBOARD
+		 	<include refid="includeList"/>
+		)
+		WHERE B_SEQ BETWEEN #{param1} AND #{param2} -->
+	</select>
+	<!-- 글의갯수 -->
+	<select id="selectBoardCount" resultType="Integer">
+		SELECT COUNT(*) FROM replyboard 
+			<include refid="includeCount"/>
+	</select>
+	<insert id="write">
+		<!-- INSERT INTO REPLYBOARD(BID,BNAME,BTITLE,
+		BCONTENT,BDATE,BHIT,BGROUP,BSTEP,BINDENT)
+		VALUES(REPLYBOARD_SEQ.NEXTVAL,#{param1},#{param2},
+		#{param3},SYSDATE,0,REPLYBOARD_SEQ.CURRVAL,0,0) -->
+
+
+		INSERT INTO replyboard(BNAME, BTITLE, BCONTENT, BDATE,
+		BHIT, BGROUP, BSTEP, BINDENT)
+		VALUES (#{param1}, #{param2}, #{param3},
+		NOW(), 0, LAST_INSERT_ID()+1, 0, 0)
+		
+	</insert>
+	
+	
+		<select id="selBid" resultType="Integer">
+		SELECT MAX(BID) FROM replyboard
+	</select>
+	<update id="updatebgroup">
+		UPDATE replyboard 
+		    SET bgroup = #{param1}
+		    WHERE bid = #{param1}
+	</update>
+	<insert id="imgwrite">
+		INSERT INTO rebrdimgtb(bid,reborgfile,rebchgfile)
+		VALUES(#{param1},#{param2},
+		#{param3})
+	</insert>
+	<select id="selectImg" resultType="com.tech.prjm09.dto.RebrdimgDto">
+		SELECT * FROM rebrdimgtb WHERE BID=#{param1}
+	</select>
+	
+	
+	<select id="contentView" resultType="com.tech.prjm09.dto.BDto">
+		SELECT BID,BNAME,BTITLE,BCONTENT,
+		BDATE,BHIT,BGROUP,BSTEP,BINDENT
+		FROM replyboard WHERE BID=#{param1}
+	</select>
+	
+	
+	
+	<update id="modify">
+		UPDATE REPLYBOARD SET BNAME=#{param2},
+		BTITLE=#{param3}, BCONTENT=#{param4}  
+		WHERE BID=#{param1}
+	</update>
+
+	<select id="reply_view" resultType="com.tech.prjm09.dto.BDto">
+		SELECT BID,BNAME,BTITLE,BCONTENT,
+		BDATE,BHIT,BGROUP,BSTEP,BINDENT
+		FROM replyboard WHERE BID=#{param1}
+	</select>
+	<insert id="reply" parameterType="map">
+		<!-- INSERT INTO REPLYBOARD(BID,BNAME,BTITLE,
+		BCONTENT,BGROUP,BSTEP,BINDENT)
+		VALUES(REPLYBOARD_SEQ.NEXTVAL,
+		#{param2},#{param3},#{param4},
+		#{param5},#{param6}+1,#{param7}+1) -->
+		
+		INSERT INTO replyboard(BNAME,BTITLE,
+		BCONTENT,BGROUP,BSTEP,BINDENT)
+		VALUES(
+		#{param2},#{param3},#{param4},
+		#{param5},#{param6}+1,#{param7}+1)
+	</insert>
+	<update id="replyShape">
+		UPDATE replyboard SET BSTEP=BSTEP+1
+		WHERE BGROUP=#{param1} AND BSTEP>#{param2}
+	</update>
+	<delete id="delete">
+		DELETE FROM replyboard WHERE BID=#{param1}
+	</delete>
+	
+	<update id="upHit">
+		UPDATE replyboard SET BHIT=BHIT+1  
+		WHERE BID=#{param1}
+	</update>
+	
+
+</mapper>

@@ -1,0 +1,3 @@
+multi부터 수정
+resource에 static/files 생성
+view수정 content_view, write_view

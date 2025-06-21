@@ -1,0 +1,155 @@
+import해서 실행에 오류날때
+maven update하세요.
+
+
+CREATE TABLE replyboard (
+    bid INT PRIMARY KEY auto_increment,
+    bname VARCHAR(20),
+    btitle VARCHAR(100),
+    bcontent VARCHAR(300),
+    bdate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    bhit INT DEFAULT 0,
+    bgroup INT,
+    bstep INT,
+    bindent INT,
+    filesrc VARCHAR(100)
+);
+use test;
+drop table replyboard;
+
+CREATE SEQUENCE replyboard_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+INSERT INTO replyboard (bid, bname, btitle, bcontent, bdate, bhit, bgroup, bstep, bindent)
+VALUES (NEXT VALUE FOR replyboard_seq, 'cj', 'title', 'content', CURRENT_TIMESTAMP, 0, NEXT VALUE FOR replyboard_seq, 0, 0);
+use test;
+select * from replyboard;
+
+SET @new_bid = NEXT VALUE FOR replyboard_seq;
+
+-- Now you can use the variable for the insert
+INSERT INTO replyboard (bid, bname, btitle, bcontent, bdate, bhit, bgroup, bstep, bindent)
+VALUES (@new_bid, 'cj', 'title', 'content', CURRENT_TIMESTAMP, 0, @new_bid, 0, 0);
+delete from replyboard;
+commit;
+SET SQL_SAFE_UPDATES = 0;
+SELECT BID,BNAME,BTITLE,BCONTENT,
+		BDATE,BHIT,BGROUP,BSTEP,BINDENT 
+		FROM REPLYBOARD ORDER BY BGROUP DESC,BSTEP ASC ;
+SELECT * FROM REPLYBOARD ORDER BY BGROUP DESC,
+		BSTEP ASC;
+        
+---------
+CREATE TABLE replyboard (
+  bid INT AUTO_INCREMENT PRIMARY KEY,
+  bname VARCHAR(255),
+  btitle VARCHAR(255),
+  bcontent TEXT,
+  bdate DATETIME,
+  bhit INT,
+  bgroup INT,
+  bstep INT,
+  bindent INT
+);
+INSERT INTO replyboard(bname, btitle, bcontent, bdate, bhit, bgroup, bstep, bindent)
+VALUES ('cj', 'title', 'content', NOW(), 0, LAST_INSERT_ID()+1, 0, 0);
+select * from replyboard;
+select * from replyboard where btitle like '%r%';
+select count(*) from replyboard WHERE (BTITLE LIKE '%r1%');
+
+update replyboard set bgroup=7 where bid=7;
+show table status where name="replyboard";
+select last_insert_id();
+select auto_increment();
+commit;
+delete from replyboard where bid=3;
+rollback;
+
+CREATE TABLE rebrdimgtb (
+  rebno INT auto_increment PRIMARY KEY,
+  bid INT,
+  reborgfile VARCHAR(100),
+  rebchgfile VARCHAR(100)
+);
+
+select * from rebrdimgtb;
+
+
+
+like use concat gpt
+<when test="param2==1">
+				<!-- WHERE (BTITLE LIKE '%'||#{param1}||'%') -->
+				WHERE BTITLE LIKE CONCAT('%',#{param1}, '%')
+			</when>
+			<when test="param2==2">
+				<!-- WHERE (BCONTENT LIKE '%'||#{param1}||'%') -->
+				WHERE (BTITLE LIKE CONCAT('%',#{param1}, '%')
+			</when>
+			<when test="param2==3">
+				<!-- WHERE (BTITLE LIKE '%'||#{param1}||'%'
+				OR BCONTENT LIKE '%'||#{param1}||'%') -->
+				WHERE (BTITLE LIKE CONCAT('%',#{param1}, '%'
+				OR BTITLE LIKE CONCAT('%',#{param1}, '%')
+				
+			</when>
+			
+			
+1차검증 내컴에서 마리아디비 접속 처리완성
+2차점검 내컴에서 디비서버만클라우드에 연결 실행확인
+먼제 ssh로 root에 접속해서 권한설정
+Database changed
+MariaDB [mysql]> select host,user,password from user;
++------------------------+-------+-------------------------------------------+
+| host                   | user  | password                                  |
++------------------------+-------+-------------------------------------------+
+| localhost              | root  | *FD571203974BA9AFE270FE62151AE967ECA5E0AA |
+| instance-20240723-1648 | root  | *FD571203974BA9AFE270FE62151AE967ECA5E0AA |
+| 127.0.0.1              | root  | *FD571203974BA9AFE270FE62151AE967ECA5E0AA |
+| ::1                    | root  | *FD571203974BA9AFE270FE62151AE967ECA5E0AA |
+| %                      | green | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
++------------------------+-------+-------------------------------------------+
+5 rows in set (0.002 sec)
+
+MariaDB [mysql]> grant create,drop on *.* to 'green'@'%';
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [mysql]> flush privileges;
+Query OK, 0 rows affected (0.002 sec)
+후에 내컴 워크벤치에서 리모트 접속 데이터베이스만들기(test) 및 테이블 만들기(replyboard)
+
+MariaDB [mysql]> grant all privileges on *.* to 'green'@'%';
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [mysql]> flush privileges;
+Query OK, 0 rows affected (0.000 sec)
+
+
+마리아 디비는 테이블 이름 대소문자구분***
+
+ Incorrect string value: '\xEB\x8B\xB5\xEB\xB3\x80...' for column `test`.`replyboard`.`btitle` at row 1] with root cause
+ 이런에러나면 한글처리뭄제 내용이 한글일때 일으킴
+
+ 
+ 한글입력 에러날때
+ use mysql;
+use test;
+ALTER DATABASE test CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;
+ALTER TABLE replyboard CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+SELECT DEFAULT_CHARACTER_SET_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = 'test';
+SHOW TABLE STATUS WHERE NAME = 'replyboard';
+
+
+		iDao.write(bname,btitle,bcontent);
+		int bid=iDao.selBid(); //mariadb때 추가로 대치
+		iDao.updatebgroup(bid);
+		
+		트리거로 하려 했으나 위처럼 업데이트 문장으로 처리함
+		
+port drop시키리
+lsof -i : 9004
+kill -9 pid
+ 
