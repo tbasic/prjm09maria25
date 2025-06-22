@@ -41,8 +41,11 @@ public class BContentViewService implements BServiceInter{
 		String workPath=System.getProperty("user.dir");
 //		String root="C:\\24sts4\\24springwork\\prjm29replyboard_mpsupdown_multi\\"
 //				+ "src\\main\\resources\\static\\files";
-		String filePath=workPath+"\\src\\main\\resources\\static\\files";
-		model.addAttribute("filePath",filePath);
+		String filePath1=workPath+"\\src\\main\\resources\\static\\files\\";
+		model.addAttribute("filePath1",filePath1);
+		String filePath2="\\src\\main\\resources\\static\\files\\";
+		model.addAttribute("filePath2",filePath2);
+		
 		
 		
 	}
