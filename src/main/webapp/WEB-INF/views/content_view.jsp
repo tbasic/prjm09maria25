@@ -60,7 +60,7 @@
 </table>
 <hr />
 <c:forEach items="${imgList }" var="imgdto">
-		<img src="app/src/main/resources/static/files/${imgdto.rebchgfile }" width="300" height=230 alt="" /><br />
+		<img src="/files/${imgdto.rebchgfile }" width="300" height=230 alt="" /><br />
 </c:forEach>
 
 </body>
