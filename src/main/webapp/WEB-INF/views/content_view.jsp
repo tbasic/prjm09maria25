@@ -65,5 +65,6 @@
 <hr />
 <img src="/static/images/redhat.png" alt="" />
 
+
 </body>
 </html>
