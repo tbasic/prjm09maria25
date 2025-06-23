@@ -43,7 +43,8 @@ public class BDownLoadService implements BServiceInter{
 			
 //			String realPath="C:\\24sts4\\24springwork\\prjm29replyboard_mpsupdown_multi\\"
 //					+ "src\\main\\resources\\static\\files\\"+fname;
-			String realPath=workPath+"\\src\\main\\resources\\static\\files\\"+fname;
+//			String realPath=workPath+"\\src\\main\\resources\\static\\files\\"+fname;
+			String realPath=workPath+"\\src\\main\\resources\\static\\images\\"+fname;
 			
 			FileInputStream fin=new FileInputStream(realPath);
 			ServletOutputStream sout=response.getOutputStream();
