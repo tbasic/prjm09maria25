@@ -40,8 +40,8 @@ public class BWriteService implements BServiceInter{
 		String workPath=System.getProperty("user.dir");
 //		String root="C:\\24sts4\\24springwork\\prjm29replyboard_mpsupdown_multi\\"
 //				+ "src\\main\\resources\\static\\files";
-		String root=workPath+"\\src\\main\\resources\\static\\files";
-//		String root=workPath+"\\src\\main\\resources\\static\\images";
+//		String root=workPath+"\\src\\main\\resources\\static\\files";
+		String root=workPath+"\\src\\main\\resources\\static\\images";
 		
 		
 //		int bid=iDao.selBid();
